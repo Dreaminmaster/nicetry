@@ -1,0 +1,138 @@
+<!doctype html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<meta content="#090a0d" name="theme-color"/>
+<meta content="A tactile Three.js experiment inspired by classic Macintosh, cassette players, instant cameras and CRT televisions." name="description"/>
+<title>NICE TRY — Interactive Object Archive</title>
+<link href="./styles.css" rel="stylesheet"/>
+</head>
+<body>
+<div aria-hidden="true" class="boot" id="boot">
+<div class="boot-box">
+<div class="boot-mark">⌘</div>
+<div class="boot-line"><span></span></div>
+<div class="boot-copy"><span>Loading object archive</span><span>WebGL</span></div>
+</div>
+</div>
+<header class="site-header">
+<div class="brand">NICE TRY / OBJECT ARCHIVE</div>
+<div class="header-center">Three.js tactile experiments</div>
+<div class="header-index"><span id="currentIndex">01</span> / 04</div>
+</header>
+<nav aria-label="章节导航" class="rail">
+<button aria-current="true" data-go="0" type="button">Mac</button>
+<button data-go="1" type="button">Tape</button>
+<button data-go="2" type="button">Camera</button>
+<button data-go="3" type="button">TV</button>
+</nav>
+<div aria-hidden="true" class="stage">
+<canvas id="scene"></canvas>
+</div>
+<div class="vignette"></div>
+<div class="grain"></div>
+<main>
+<section class="chapter" data-scene="0" id="mac">
+<div class="copy">
+<p class="eyebrow">01 — Personal machine / 1984</p>
+<h1>Hello,<br/>again.</h1>
+<p>把经典 Macintosh 拆解为可交互的几何体：拖动观察，轻点屏幕切换系统画面。不是照片贴图，而是实时渲染的网页对象。</p>
+<div class="meta-row">
+<span class="pill">Drag to rotate</span>
+<span class="pill">Tap screen</span>
+<span class="pill">Realtime 3D</span>
+</div>
+</div>
+<div class="micro-note a">Creative direction
+visual identity / UX</div>
+<div class="micro-note b">Designed in code
+made for touch</div>
+<div class="sticker">⌘</div>
+</section>
+<section class="chapter" data-scene="1" id="tape">
+<div class="copy">
+<p class="eyebrow">02 — Portable sound / Side A</p>
+<h2>Press<br/>play.</h2>
+<p>透明磁带窗、旋转卷轴、机械按键和微弱的信号灯组成第二件藏品。轻点磁带开始或暂停，卷轴会跟着状态变化。</p>
+<div class="meta-row">
+<span class="pill">Tap cassette</span>
+<span class="pill">Mechanical motion</span>
+</div>
+</div>
+<div class="micro-note a">Magnetic memory
+90 minutes / stereo</div>
+<div class="micro-note b">Side A is never
+really finished</div>
+<div class="sticker">▶</div>
+</section>
+<section class="chapter" data-scene="2" id="camera">
+<div class="copy">
+<p class="eyebrow">03 — Instant image / One frame</p>
+<h2>Take a<br/>memory.</h2>
+<p>即时相机不是静态摆件：触碰镜头会触发闪光，照片从机身底部滑出，并在显影过程中逐渐出现图像。</p>
+<div class="meta-row">
+<span class="pill">Tap lens</span>
+<span class="pill">Flash + eject</span>
+</div>
+</div>
+<div class="micro-note a">One click
+one physical object</div>
+<div class="micro-note b">No undo
+only another frame</div>
+<div class="sticker">✦</div>
+</section>
+<section class="chapter" data-scene="3" id="tv">
+<div class="copy">
+<p class="eyebrow">04 — Broadcast object / Channel 04</p>
+<h2>Static<br/>dreams.</h2>
+<p>最后一件是带有凸面屏幕的老式电视。轻点屏幕切换频道，彩条、噪点和信号图案会实时生成。</p>
+<div class="meta-row">
+<span class="pill">Tap to tune</span>
+<span class="pill">Procedural screen</span>
+</div>
+</div>
+<div class="micro-note a">Signal found
+somewhere after midnight</div>
+<div class="micro-note b">Channel 04
+please stand by</div>
+<div class="sticker">04</div>
+</section>
+<section class="archive" id="archive">
+<div class="archive-head">
+<h2>Found images,<br/>rebuilt as objects.</h2>
+<p class="archive-intro">视觉方向参考了公开的经典 Macintosh、即时相机、磁带机与 CRT 电视图片；网页中的主体则全部用 Three.js 几何体重新构建。</p>
+</div>
+<div class="cards">
+<article class="photo-card">
+<img alt="Classic Macintosh 128K" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Macintosh%20128k.jpg"/>
+<div class="card-caption"><strong>Macintosh 128K</strong><span>Wikimedia Commons<br/>visual reference</span></div>
+</article>
+<article class="photo-card">
+<img alt="Vintage radio cassette player" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Vintage%20Radio%20Cassette%20Player.jpg"/>
+<div class="card-caption"><strong>Radio Cassette</strong><span>Wikimedia Commons<br/>visual reference</span></div>
+</article>
+<article class="photo-card">
+<img alt="Polaroid instant camera" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Polaroid-Camera.jpg"/>
+<div class="card-caption"><strong>Instant Camera</strong><span>CC0 image<br/>visual reference</span></div>
+</article>
+<article class="photo-card">
+<img alt="Old CRT television set" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Old%20CRT%20Television%20Set.jpg"/>
+<div class="card-caption"><strong>CRT Television</strong><span>Wikimedia Commons<br/>visual reference</span></div>
+</article>
+<article class="photo-card">
+<img alt="Compact cassette illustration" loading="lazy" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Cassette%20tape.svg"/>
+<div class="card-caption"><strong>Compact Cassette</strong><span>Public-domain SVG<br/>visual reference</span></div>
+</article>
+</div>
+</section>
+</main>
+<div class="interaction">Scroll to explore · drag the object · tap a hotspot</div>
+<footer>
+<span>NICE TRY / Dreaminmaster</span>
+<span>Three.js · Procedural geometry · GitHub Pages</span>
+</footer>
+<script src="./app.js" type="module"></script>
+</body>
+</html>
