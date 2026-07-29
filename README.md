@@ -2,6 +2,8 @@
 
 A single-page Three.js experiment that turns classic technology references into tactile, interactive web objects.
 
+**Live site:** https://dreaminmaster.github.io/nicetry/
+
 ## Included scenes
 
 - Classic Macintosh-inspired computer — tap the screen to cycle the interface
