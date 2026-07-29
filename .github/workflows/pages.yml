@@ -2,7 +2,8 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -23,12 +24,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Verify static site
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f app.js
+          test -f scene.js
+          test -f textures.js
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
+
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
