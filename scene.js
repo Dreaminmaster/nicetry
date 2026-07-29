@@ -1,5 +1,4 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js';
-import { RoundedBoxGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 const canvas = document.querySelector('#scene');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -77,8 +76,37 @@ dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
 const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ color: 0xffffff, size: .013, transparent: true, opacity: .28, depthWrite: false }));
 scene.add(dust);
 
+function roundedRectShape(w, h, radius) {
+  const r = Math.min(radius, w * .5, h * .5);
+  const x = -w * .5;
+  const y = -h * .5;
+  const shape = new THREE.Shape();
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + w - r, y);
+  shape.quadraticCurveTo(x + w, y, x + w, y + r);
+  shape.lineTo(x + w, y + h - r);
+  shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  shape.lineTo(x + r, y + h);
+  shape.quadraticCurveTo(x, y + h, x, y + h - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+  return shape;
+}
+
 function rounded(w, h, d, radius, material) {
-  const mesh = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 5, radius), material);
+  const bevel = Math.min(radius * .28, d * .18, .08);
+  const geometry = new THREE.ExtrudeGeometry(roundedRectShape(w, h, radius), {
+    depth: Math.max(.001, d - bevel * 2),
+    bevelEnabled: bevel > .001,
+    bevelSegments: 3,
+    steps: 1,
+    bevelSize: bevel,
+    bevelThickness: bevel,
+    curveSegments: 8,
+  });
+  geometry.translate(0, 0, -d * .5 + bevel);
+  geometry.computeVertexNormals();
+  const mesh = new THREE.Mesh(geometry, material);
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   return mesh;
