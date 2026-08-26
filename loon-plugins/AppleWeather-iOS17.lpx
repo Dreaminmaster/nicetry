@@ -1,13 +1,22 @@
-#!name = Apple Weather iOS 17
-#!desc = iOS 17.x 专用 Apple Weather 增强（基于 NSRingo WeatherKit v3.1.0）
-#!author = NSRingo / VirgilClyne contributors
-#!homepage = https://github.com/NSRingo/WeatherKit
+#!name = Apple Weather iOS 17.6 (WeatherKit v3)
+#!desc = 针对 iOS 17.6.x 实际 WeatherKit /v3/weather 接口适配；基于 NSRingo 归档 Weather v4 的 API v3 JSON 处理逻辑。增强空气质量并尝试补充下一小时降水。
+#!author = NSRingo / VirgilClyne / WordlessEcho; iOS 17.6 adaptation by Dreaminmaster
+#!homepage = https://github.com/NSRingo/Weather
 #!system = iOS,iPadOS
 #!system_version = 17
 
+[Rule]
+DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
+
 [Script]
-http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js, requires-body=true, timeout=20, tag=天气可用性响应
-http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js, requires-body=true, binary-body-mode=true, timeout=20, tag=天气响应
+# iOS 17.6.x 实测主接口：weatherkit.apple.com/v3/weather/<locale>/<lat>/<lng>
+http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/weather\/[A-Za-z0-9-]+\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/response.js, requires-body=true, timeout=30, tag=Apple Weather iOS17 v3 Response
+
+# 兼容可能出现的 v3 availability 请求；没有出现时不会触发
+http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.response.js, requires-body=true, timeout=20, tag=Apple Weather iOS17 v3 Availability
+
+# 兼容 iOS 17 天气空气质量地图请求
+http-request ^https?:\/\/weather-map2?\.apple\.com\/(v1|v2)\/mapOverlay\/\w+(\?.*country=CN.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Map.request.js, timeout=20, tag=Apple Weather AQI Map
 
 [MITM]
-hostname = weatherkit.apple.com
+hostname = weatherkit.apple.com, weather-edge.apple.com, weather-map.apple.com, weather-map2.apple.com
