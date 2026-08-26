@@ -1,5 +1,5 @@
 #!name = Apple Weather iOS 17.6 · WeatherKit v3 Custom
-#!desc = 按 iOS 17.6.1 实际 HAR 定制：匹配 weatherkit.apple.com/v3/weather；基于 NSRingo 归档 Weather v4 的 API v3 JSON 逻辑，解锁可用天气数据、增强 AQI，并在数据源可用时补充下一小时降水。
+#!desc = 按 iOS 17.6.1 实际 HAR 定制：匹配 weatherkit.apple.com/v3/weather；基于 NSRingo 归档 Weather v4 的 API v3 JSON 逻辑，解锁可用天气数据、增强 AQI、补充下一小时降水，并修复国内 AQI 标尺请求 404 导致数值不显示的问题。
 #!author = NSRingo / VirgilClyne / WordlessEcho; iOS 17.6 compatibility wrapper by Dreaminmaster
 #!homepage = https://github.com/NSRingo/Weather
 #!system = iOS,iPadOS
@@ -12,6 +12,11 @@ DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
 # iOS 17.6.x 实测主接口：weatherkit.apple.com/v3/weather/<locale>/<lat>/<lng>
 # NSRingo 归档 response.js 本身支持 Apple Weather API v3 JSON 与 forecastNextHour 注入。
 http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/weather\/[A-Za-z0-9-]+\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/response.js, requires-body=true, timeout=30, tag=Apple Weather iOS17 v3 Response
+
+# iOS 17.6 国内 AQI 标尺桥接。
+# 实测系统会请求 /v3/airQualityScale/<lang>/EPA_NowCast.2207，而该旧路径返回 404。
+# 转换为当前 WeatherKit 使用的 /api/v1/airQualityScale/<lang>/EPA_NowCast。
+http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/airQualityScale\/[^/]+\/[^/?]+(?:\?.*)?$ script-path=https://raw.githubusercontent.com/Dreaminmaster/nicetry/main/loon-plugins/scripts/AppleWeather-iOS17-AirQualityScale.js, timeout=10, tag=Apple Weather iOS17 AQI Scale Bridge
 
 # Availability：先改 ETag 避免一直命中旧缓存，再把 v3 功能列表补齐。
 http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.request.js, timeout=20, tag=Apple Weather iOS17 v3 Availability Request
