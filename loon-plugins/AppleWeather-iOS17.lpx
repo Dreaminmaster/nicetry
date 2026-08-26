@@ -1,0 +1,13 @@
+#!name = Apple Weather iOS 17
+#!desc = iOS 17.x 专用 Apple Weather 增强（基于 NSRingo WeatherKit v3.1.0）
+#!author = NSRingo / VirgilClyne contributors
+#!homepage = https://github.com/NSRingo/WeatherKit
+#!system = iOS,iPadOS
+#!system_version = 17
+
+[Script]
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v1\/availability\/ script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js, requires-body=true, timeout=20, tag=天气可用性响应
+http-response ^https?:\/\/weatherkit\.apple\.com\/api\/v2\/weather\/ script-path=https://github.com/NSRingo/WeatherKit/releases/download/v3.1.0/response.bundle.js, requires-body=true, binary-body-mode=true, timeout=20, tag=天气响应
+
+[MITM]
+hostname = weatherkit.apple.com
