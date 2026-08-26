@@ -1,6 +1,6 @@
-#!name = Apple Weather iOS 17.6 (WeatherKit v3)
-#!desc = 针对 iOS 17.6.x 实际 WeatherKit /v3/weather 接口适配；基于 NSRingo 归档 Weather v4 的 API v3 JSON 处理逻辑。增强空气质量并尝试补充下一小时降水。
-#!author = NSRingo / VirgilClyne / WordlessEcho; iOS 17.6 adaptation by Dreaminmaster
+#!name = Apple Weather iOS 17.6 · WeatherKit v3 Custom
+#!desc = 按 iOS 17.6.1 实际 HAR 定制：匹配 weatherkit.apple.com/v3/weather；基于 NSRingo 归档 Weather v4 的 API v3 JSON 逻辑，解锁可用天气数据、增强 AQI，并在数据源可用时补充下一小时降水。
+#!author = NSRingo / VirgilClyne / WordlessEcho; iOS 17.6 compatibility wrapper by Dreaminmaster
 #!homepage = https://github.com/NSRingo/Weather
 #!system = iOS,iPadOS
 #!system_version = 17
@@ -10,12 +10,14 @@ DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
 
 [Script]
 # iOS 17.6.x 实测主接口：weatherkit.apple.com/v3/weather/<locale>/<lat>/<lng>
+# NSRingo 归档 response.js 本身支持 Apple Weather API v3 JSON 与 forecastNextHour 注入。
 http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/weather\/[A-Za-z0-9-]+\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/response.js, requires-body=true, timeout=30, tag=Apple Weather iOS17 v3 Response
 
-# 兼容可能出现的 v3 availability 请求；没有出现时不会触发
-http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.response.js, requires-body=true, timeout=20, tag=Apple Weather iOS17 v3 Availability
+# Availability：先改 ETag 避免一直命中旧缓存，再把 v3 功能列表补齐。
+http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.request.js, timeout=20, tag=Apple Weather iOS17 v3 Availability Request
+http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.response.js, requires-body=true, timeout=20, tag=Apple Weather iOS17 v3 Availability Response
 
-# 兼容 iOS 17 天气空气质量地图请求
+# 空气质量地图兼容。
 http-request ^https?:\/\/weather-map2?\.apple\.com\/(v1|v2)\/mapOverlay\/\w+(\?.*country=CN.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Map.request.js, timeout=20, tag=Apple Weather AQI Map
 
 [MITM]
