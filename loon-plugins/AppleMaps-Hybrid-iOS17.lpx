@@ -1,0 +1,43 @@
+#!name = Apple Maps iOS17 · Smart Hybrid
+#!desc = 基于 NSRingo MapKit v4.6.1 稳定逻辑定制：地区自动；中国/海外智能切换；地点与导航采用高德兼容调度，评分照片使用 Apple，地球/道路/卫星按地区自动选择。仅作用于 Apple Maps，不修改系统 LocationService 地区检测。
+#!author = NSRingo / VirgilClyne; Smart Hybrid wrapper by Dreaminmaster
+#!homepage = https://github.com/NSRingo/MapKit
+#!icon = https://developer.apple.com/assets/elements/icons/maps/maps-128x128.png
+#!tag = Apple Maps,iRingo,MapKit
+#!system = iOS,iPadOS,macOS
+#!system_version = 15
+
+[Argument]
+GeoManifest.Dynamic.Config.CountryCode = select,"AUTO","CN","US","HK","TW","SG","JP","AU","GB","KR","CA","IE",tag=[地图] 地区配置,desc=AUTO 跟随地图当前地区；如自动识别异常可手动指定。
+UrlInfoSet.Dispatcher = select,"AutoNavi","AUTO","Apple",tag=[地点] 数据调度,desc=默认高德兼容：大陆可用互动百科/大众点评/携程，海外由地图配置提供国际地点资料。
+UrlInfoSet.Directions = select,"AutoNavi","AUTO","Apple",tag=[导航] 导航与 ETA,desc=默认高德兼容：大陆使用高德导航数据，海外使用对应国际导航服务。
+UrlInfoSet.RAP = select,"Apple","AUTO","AutoNavi",tag=[地点] 评分与照片,desc=默认 Apple，优先保留国际版评分和照片能力。
+UrlInfoSet.LocationShift = select,"AUTO","AutoNavi","Apple",tag=[坐标] 定位漂移修正,desc=AUTO 按地图资源环境选择合适坐标处理，避免在大陆强制 WGS-84 导致偏移。
+TileSet.Earth = select,"AUTO","Apple","AutoNavi",tag=[图层] 地球视图,desc=AUTO 按地区选择；可手动切 Apple 或高德版本。
+TileSet.Roads = select,"AUTO","CN","XX",tag=[图层] 道路与四处看看,desc=AUTO：大陆优先道路坐标准确，海外使用国际道路/四处看看资源。
+TileSet.Satellite = select,"AUTO","CN","XX",tag=[图层] 2D 卫星图,desc=AUTO：大陆与国际地区分别使用更合适的卫星数据版本。
+Storage = select,"Argument","PersistentStore","database",tag=[配置] 设置来源,desc=Argument 表示优先使用本插件当前选项。
+LogLevel = select,"WARN","ERROR","OFF","INFO","DEBUG","ALL",tag=[调试] 日志等级,desc=日常使用保持 WARN。
+
+[Rule]
+# Amap / mainland Apple Maps data required for correct mainland map coordinates and services.
+DOMAIN-SUFFIX,is.autonavi.com,DIRECT
+DOMAIN,gspe11-2-cn-ssl.ls.apple.com,DIRECT
+DOMAIN,gspe12-cn-ssl.ls.apple.com,DIRECT
+DOMAIN,gspe19-cn-ssl.ls.apple.com,DIRECT
+DOMAIN,gspe19-2-cn-ssl.ls.apple.com,DIRECT
+DOMAIN,gspe79-cn-ssl.ls.apple.com,DIRECT
+
+[Script]
+# Pin the official stable v4.6.1 MapKit bundles instead of tracking unreleased breaking changes.
+http-request ^https?:\/\/configuration\.ls\.apple\.com\/config\/defaults script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/request.bundle.js, tag=Apple Maps Hybrid.config.defaults.request, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+http-response ^https?:\/\/configuration\.ls\.apple\.com\/config\/defaults script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/response.bundle.js, requires-body=1, tag=Apple Maps Hybrid.config.defaults.response, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+
+http-request ^https?:\/\/gspe35-ssl\.ls\.apple\.(com|cn)\/config\/announcements script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/request.bundle.js, tag=Apple Maps Hybrid.announcements.request, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+http-response ^https?:\/\/gspe35-ssl\.ls\.apple\.(com|cn)\/config\/announcements script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/response.bundle.js, requires-body=1, binary-body-mode=1, tag=Apple Maps Hybrid.announcements.response, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+
+http-request ^https?:\/\/gspe35-ssl\.ls\.apple\.(com|cn)\/geo_manifest\/dynamic\/config script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/request.bundle.js, tag=Apple Maps Hybrid.geo_manifest.request, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+http-response ^https?:\/\/gspe35-ssl\.ls\.apple\.(com|cn)\/geo_manifest\/dynamic\/config script-path=https://github.com/NSRingo/MapKit/releases/download/v4.6.1/response.bundle.js, requires-body=1, binary-body-mode=1, tag=Apple Maps Hybrid.geo_manifest.response, argument=[{GeoManifest.Dynamic.Config.CountryCode},{UrlInfoSet.Dispatcher},{UrlInfoSet.Directions},{UrlInfoSet.RAP},{UrlInfoSet.LocationShift},{TileSet.Earth},{TileSet.Roads},{TileSet.Satellite},{Storage},{LogLevel}]
+
+[MITM]
+hostname = configuration.ls.apple.com, gspe35-ssl.ls.apple.com
