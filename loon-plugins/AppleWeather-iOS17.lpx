@@ -1,5 +1,5 @@
 #!name = Apple Weather iOS 17.6 · WeatherKit v3 Custom
-#!desc = 按 iOS 17.6.1 实际 HAR 定制：匹配 weatherkit.apple.com/v3/weather；增强 AQI、补充下一小时降水，并修复国内 AQI 标尺请求 404。远程脚本改用 jsDelivr CDN，避免 raw.githubusercontent.com 更新/加载不稳定。
+#!desc = 按 iOS 17.6.1 实际 HAR 定制：匹配 weatherkit.apple.com/v3/weather；增强 AQI、补充下一小时降水，并修复国内 AQI 标尺请求 404。
 #!author = NSRingo / VirgilClyne / WordlessEcho; iOS 17.6 compatibility wrapper by Dreaminmaster
 #!homepage = https://github.com/NSRingo/Weather
 #!system = iOS,iPadOS
@@ -10,18 +10,18 @@ DOMAIN,weather-analytics-events.apple.com,REJECT-DROP
 
 [Script]
 # iOS 17.6.x 实测主接口：weatherkit.apple.com/v3/weather/<locale>/<lat>/<lng>
-http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/weather\/[A-Za-z0-9-]+\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://cdn.jsdelivr.net/gh/NSRingo/Weather@main/js/response.js, requires-body=true, timeout=30, tag=Apple Weather iOS17 v3 Response
+http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/weather\/[A-Za-z0-9-]+\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/response.js, requires-body=true, timeout=30, tag=Apple Weather iOS17 v3 Response
 
 # iOS 17.6 国内 AQI 标尺桥接。
 # 系统会请求 /v3/airQualityScale/<lang>/<scale>.2207；桥接到 /api/v1/airQualityScale/<lang>/<versionless-scale>。
-http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/airQualityScale\/[^/]+\/[^/?]+(?:\?.*)?$ script-path=https://cdn.jsdelivr.net/gh/Dreaminmaster/nicetry@main/loon-plugins/scripts/AppleWeather-iOS17-AirQualityScale.js, timeout=10, tag=Apple Weather iOS17 AQI Scale Bridge
+http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/airQualityScale\/[^/]+\/[^/?]+(?:\?.*)?$ script-path=https://raw.githubusercontent.com/Dreaminmaster/nicetry/main/loon-plugins/scripts/AppleWeather-iOS17-AirQualityScale.js, timeout=10, tag=Apple Weather iOS17 AQI Scale Bridge
 
 # Availability：改 ETag 避免旧缓存，并补齐 v3 功能列表。
-http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://cdn.jsdelivr.net/gh/NSRingo/Weather@main/js/Availability.request.js, timeout=20, tag=Apple Weather iOS17 v3 Availability Request
-http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://cdn.jsdelivr.net/gh/NSRingo/Weather@main/js/Availability.response.js, requires-body=true, timeout=20, tag=Apple Weather iOS17 v3 Availability Response
+http-request ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.request.js, timeout=20, tag=Apple Weather iOS17 v3 Availability Request
+http-response ^https?:\/\/weatherkit\.apple\.com\/v3\/availability\/-?\d+(?:\.\d+)?\/-?\d+(?:\.\d+)?(?:\?.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Availability.response.js, requires-body=true, timeout=20, tag=Apple Weather iOS17 v3 Availability Response
 
 # 空气质量地图兼容。
-http-request ^https?:\/\/weather-map2?\.apple\.com\/(v1|v2)\/mapOverlay\/\w+(\?.*country=CN.*)?$ script-path=https://cdn.jsdelivr.net/gh/NSRingo/Weather@main/js/Map.request.js, timeout=20, tag=Apple Weather AQI Map
+http-request ^https?:\/\/weather-map2?\.apple\.com\/(v1|v2)\/mapOverlay\/\w+(\?.*country=CN.*)?$ script-path=https://raw.githubusercontent.com/NSRingo/Weather/main/js/Map.request.js, timeout=20, tag=Apple Weather AQI Map
 
 [MITM]
 hostname = weatherkit.apple.com, weather-edge.apple.com, weather-map.apple.com, weather-map2.apple.com
